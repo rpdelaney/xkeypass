@@ -13,7 +13,7 @@ To install, copy `xkeypass` into your $PATH.
 ```
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] COMMAND [TITLE]
+Usage: xkeypass [OPTION] [COMMAND] [FIELD] [VALUE]
 
 Options
   -?, --help                  print this help and exit
