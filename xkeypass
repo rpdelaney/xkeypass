@@ -10,7 +10,7 @@
 
 # Functions {{{1
 verbose() {
-  if [[ "$verbose" = "1" ]]; then
+  if [[ "$verbose" -gt "0" ]]; then
     echo "$1" >&2
   fi
 }
