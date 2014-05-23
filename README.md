@@ -13,19 +13,20 @@ To install, copy `xkeypass` into your $PATH.
 ```
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] [COMMAND] [FIELD] [VALUE]
+Usage: xkeypass [OPTION] COMMAND TITLE
 
 Options
   -?, --help                  print this help and exit
-  -v, --verbose               increase verbosity
-  a, add [FIELD] [VALUE]      add a new field
-  d, del [FIELD]              delete a field
-  g, get [FIELD]              extract a field and decode it
-  u, update [FIELD] [VALUE]   update a field with a new value
+  -v, --verbose               increase verbosity of debugging output
+  a, add                      create a new record named TITLE
+  d, del KEY                  delete a key from TITLE
+  g, get KEY                  retrieve a key from TITLE
+  u, update KEY VALUE         update or create a key in TITLE
+  t, type VALUE               type the field value with xdotool
 ```
 
 ##To-Do
-* Type the passwords using xdotool
+* Support arrays
 
 ##Legal
 This program is free software: you can redistribute it and/or modify it
@@ -36,7 +37,7 @@ option) any later version.
 You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TERMS AND CONDITIONS
+####TERMS AND CONDITIONS
 
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
 APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
