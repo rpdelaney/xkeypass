@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+# GNU bash, version 4.3.8(1)-release (x86_64-unknown-linux-gnu)
+#
+# © Copyright 2014 Ryan Delaney. All rights reserved.
+# This work is distributed WITHOUT ANY WARRANTY whatsoever; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the README file for additional terms and conditions on your use of this
+# software.
+#
+
+# Functions {{{1
+verbose() {
+  if [[ "$verbose" = "1" ]]; then
+    echo "$1" >&2
+  fi
+}
+
+error () {
+  echo "$1" >&2
+}
+
+cleanup() {
+  # Remove the temporary file
+  verbose "Removing tmpfile: $tmpfile"
+  [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
+  exit 0
+}
+
+retrieve() {
+  local key="$1"
+  local passpath="$2"
+  local tmpfile="$3"
+
+  if pass show "$passpath" > "$tmpfile"; then
+    jshon -e "$key" -u -F "$tmpfile"
+  else
+    error "$(cat "$tmpfile")"
+  fi
+  cleanup
+}
+# }}}
+# Usage {{{1
+#
+usage() {
+cat <<EOD
+xkeypass
+© Copyright 2014 Ryan Delaney. All rights reserved.
+Web site: http://github.com/rpdelaney
+
+xkeypass acts as a front-end to pass, extracting stored json data types.
+
+Usage: xkeypass [OPTION] [COMMAND] [TITLE]
+
+Options
+  -?, --help                  print this help and exit
+  -v, --verbose               increase verbosity of debugging output to STDERR
+  a, add                      create a new record named [TITLE]
+  d, del [KEY]                delete a key
+  g, get [KEY]                retrieve a key [TITLE] and decode it
+  u, update [KEY] [VALUE]     update or create a key in [TITLE]
+EOD
+exit 1
+}
+# }}}
+# Parameters {{{1
+#
+while :
+do
+  case $1 in
+    --help | -\?)
+      usage
+      exit 0
+      ;;
+    -v | --verbose)
+      # Each instance of -v adds 1 to verbosity
+      verbose=$((verbose+1))
+      shift
+      ;;
+    a | add)
+      add="$1"
+      shift
+      ;;
+    d | del)
+      delete="$1"
+      shift
+      ;;
+    g | get)
+      get="1"
+      key="$2"
+      shift
+      shift
+      ;;
+    u | update)
+      update="1"
+      key="$2"
+      keyvalue="$3"
+      shift
+      shift
+      shift
+      ;;
+    --) # End of all options
+      shift
+      break
+      ;;
+    -*)
+      error "WARNING: Ignoring unknown option: $1"
+      shift
+      ;;
+    *)  # no more options. Stop while loop
+      break
+      ;;
+  esac
+done
+# }}}
+# Input validation {{{1
+  # Assume whatever is left is the record title
+if [[ -n "$1" ]] || [[ -n "$add" ]]; then
+  passpath="$1"
+else
+  error "FATAL: record title not specified."
+  exit 1
+fi
+# }}}
+# Dependencies {{{1
+jshon &> /dev/null || ( echo "FATAL. Missing dependency: jshon" && exit 1 )
+pass &> /dev/null || ( echo "FATAL. Missing dependency: pass" && exit 1 )
+# }}}
+# Build sandbox {{{1
+tmpfile="$(mktemp --suffix=.pass)"
+chmod 0600 "$tmpfile"
+verbose "tmpfile is: $tmpfile"
+  # Clean up before exiting for any reason whatsoever
+trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
+# }}}
+# Debugging output {{{1
+if [[ "$verbose" == '2' ]]; then
+  echo "get is: $get"
+  echo "key is: $key"
+  echo "passpath is: $passpath"
+  set -x
+fi
+# }}}
+# Create {{{1
+if [[ -n "$add" ]]; then
+  verbose "Initializing new record in $passpath"
+  pass init "$passpath"
+  cleanup
+fi
+# }}}
+# Retrieve {{{1
+if [[ -n "$get" ]]; then
+  verbose "Extracting $key from $passpath"
+  retrieve "$key" "$passpath" "$tmpfile"
+fi
+# }}}
+# Update {{{1
+if [[ -n "$update" ]]; then
+  verbose "Updating $key in $passpath with $keyvalue"
+  if pass show "$passpath" > "$tmpfile"; then
+    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
+    pass insert --multiline "$passpath" < cat "$tmpfile"
+  else
+  # error "$(cat "$tmpfile")"
+    exit 1
+  fi
+  cleanup
+fi
+# }}}
+# Delete {{{1
+if [[ -n "delete" ]]; then
+  cleanup
+fi
+# }}}
+# xkey type {{{1
+if [[ -n "type" ]]; then
+  xdokey "$(retrieve "$key" "$passpath" "$tmpfile")"
+fi
+# 1}}}
+
+# vim: ft=sh foldmethod=marker :
