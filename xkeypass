@@ -28,10 +28,10 @@ cleanup() {
 
 retrieve() {
   local key="$1"
-  local passpath="$2"
+  local title="$2"
   local tmpfile="$3"
 
-  if pass show "$passpath" > "$tmpfile"; then
+  if pass show "$title" > "$tmpfile"; then
     jshon -e "$key" -u -F "$tmpfile"
   else
     error "$(cat "$tmpfile")"
@@ -65,6 +65,7 @@ Usage: xkeypass [OPTION] COMMAND TITLE
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
+Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
   g, get KEY                  retrieve a key from TITLE
@@ -133,7 +134,7 @@ done
 # Input validation {{{1
   # Assume whatever is left is the record title
 if [[ -n "$1" ]] || [[ -n "$add" ]]; then
-  passpath="$1"
+  title="$1"
 else
   error "FATAL: record title not specified."
   exit 1
@@ -154,29 +155,30 @@ trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
 if [[ "$verbose" == '2' ]]; then
   echo "get is: $get"
   echo "key is: $key"
-  echo "passpath is: $passpath"
+  echo "title is: $title"
   set -x
 fi
 # }}}
 # Create {{{1
 if [[ -n "$add" ]]; then
-  verbose "Initializing new record in $passpath"
-  pass init "$passpath"
+  verbose "Inserting new record in $title"
+  pass insert "$title"
   cleanup
 fi
 # }}}
 # Retrieve {{{1
 if [[ -n "$get" ]]; then
-  verbose "Extracting $key from $passpath"
-  retrieve "$key" "$passpath" "$tmpfile"
+  verbose "Extracting $key from $title"
+  retrieve "$key" "$title" "$tmpfile"
 fi
 # }}}
 # Update {{{1
 if [[ -n "$update" ]]; then
-  verbose "Updating $key in $passpath with $keyvalue"
-  if pass show "$passpath" > "$tmpfile"; then
+  verbose "Updating $key in $title with $keyvalue"
+  exit 0
+  if pass show "$title" > "$tmpfile"; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
-    pass insert --multiline "$passpath" < "$tmpfile"
+    pass insert --multiline "$title" < "$tmpfile"
   else
     exit 1
   fi
@@ -191,7 +193,7 @@ fi
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
   if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
-  if ! xdokey < <(retrieve "$key" "$passpath" "$tmpfile"); then
+  if ! xdokey < <(retrieve "$key" "$title" "$tmpfile"); then
     error "FATAL: error with xdokey"
   fi
 fi
