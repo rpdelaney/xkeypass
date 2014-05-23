@@ -15,7 +15,7 @@ verbose() {
   fi
 }
 
-error () {
+error() {
   echo "$1" >&2
 }
 
@@ -178,7 +178,6 @@ if [[ -n "$update" ]]; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
     pass insert --multiline "$passpath" < cat "$tmpfile"
   else
-  # error "$(cat "$tmpfile")"
     exit 1
   fi
   cleanup
