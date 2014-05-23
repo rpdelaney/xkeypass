@@ -93,7 +93,7 @@ do
       shift
       ;;
     d | del)
-      delete="$1"
+      del="$1"
       shift
       ;;
     g | get)
@@ -107,6 +107,12 @@ do
       key="$2"
       keyvalue="$3"
       shift
+      shift
+      shift
+      ;;
+    t | type)
+      xkey="1"
+      key="$2"
       shift
       shift
       ;;
@@ -179,14 +185,15 @@ if [[ -n "$update" ]]; then
 fi
 # }}}
 # Delete {{{1
-if [[ -n "delete" ]]; then
+if [[ -n "$del" ]]; then
   cleanup
 fi
 # }}}
 # xkey type {{{1
-if [[ -n "type" ]]; then
-  if ! xdokey "$(retrieve "$key" "$passpath" "$tmpfile")"; then
-    error "FATAL: missing dependency: xdokey"
+if [[ -n "$xkey" ]]; then
+  if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
+  if ! xdokey < <(retrieve "$key" "$passpath" "$tmpfile"); then
+    error "FATAL: error with xdokey"
   fi
 fi
 # 1}}}
