@@ -176,7 +176,7 @@ if [[ -n "$update" ]]; then
   verbose "Updating $key in $passpath with $keyvalue"
   if pass show "$passpath" > "$tmpfile"; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
-    pass insert --multiline "$passpath" < cat "$tmpfile"
+    pass insert --multiline "$passpath" < "$tmpfile"
   else
     exit 1
   fi
