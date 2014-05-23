@@ -1,17 +1,23 @@
 ##xkeypass
-A command-line tool that performs CRUD operations on json-formatted records stored with pass.
+A command-line tool that performs CRUD operations on json-formatted records
+stored with pass.
 
 #####Website
 * [Website](https://github.com/rpdelaney/xkeypass)
 
 ##Installation
-xkeypass depends on [pass](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld and [jshon](http://kmkeen.com/jshon/) by Kyle Keen.
+#####Dependencies
+xkeypass depends on:
+
+* [xdotool](http://www.semicomplete.com/projects/xdotool/) by Jordan Sissel
+* [pass](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld
+* [jshon](http://kmkeen.com/jshon/) by Kyle Keen
 
 To install, copy `xkeypass` into your $PATH.
 
 ##Usage
 ```
-xkeypass acts as a front-end to pass, extracting stored json data types.
+xkeypass acts as a front-end to pass, extracting stored json data.
 
 Usage: xkeypass [OPTION] COMMAND TITLE
 
