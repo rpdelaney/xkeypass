@@ -17,18 +17,20 @@ To install, copy `xkeypass` into your $PATH.
 
 ##Usage
 ```
-xkeypass acts as a front-end to pass, extracting stored json data.
+xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] COMMAND TITLE
+Usage: xkeypass [OPTION] TITLE COMMAND
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
+Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
   g, get KEY                  retrieve a key from TITLE
-  u, update KEY VALUE         update or create a key in TITLE
-  t, type VALUE               type the field value with xdotool
+  u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
+                              then read from standard input
+  t, type KEY                 type the key with xdotool
 ```
 
 ##To-Do
