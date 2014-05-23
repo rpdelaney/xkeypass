@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # GNU bash, version 4.3.8(1)-release (x86_64-unknown-linux-gnu)
 #
-# © Copyright 2014 Ryan Delaney. All rights reserved.
+# © Copyright 2014 Ryan Delaney.
 # This work is distributed WITHOUT ANY WARRANTY whatsoever; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the README file for additional terms and conditions on your use of this
@@ -44,20 +44,32 @@ retrieve() {
 usage() {
 cat <<EOD
 xkeypass
-© Copyright 2014 Ryan Delaney. All rights reserved.
+© Copyright 2014 Ryan Delaney.
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
 Web site: http://github.com/rpdelaney
 
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] [COMMAND] [TITLE]
+Usage: xkeypass [OPTION] COMMAND TITLE
 
 Options
   -?, --help                  print this help and exit
-  -v, --verbose               increase verbosity of debugging output to STDERR
-  a, add                      create a new record named [TITLE]
-  d, del [KEY]                delete a key
-  g, get [KEY]                retrieve a key [TITLE] and decode it
-  u, update [KEY] [VALUE]     update or create a key in [TITLE]
+  -v, --verbose               increase verbosity of debugging output
+  a, add                      create a new record named TITLE
+  d, del KEY                  delete a key from TITLE
+  g, get KEY                  retrieve a key from TITLE
+  u, update KEY VALUE         update or create a key in TITLE
+  t, type VALUE               type the field value with xdotool
 EOD
 exit 1
 }
@@ -173,7 +185,9 @@ fi
 # }}}
 # xkey type {{{1
 if [[ -n "type" ]]; then
-  xdokey "$(retrieve "$key" "$passpath" "$tmpfile")"
+  if ! xdokey "$(retrieve "$key" "$passpath" "$tmpfile")"; then
+    error "FATAL: missing dependency: xdokey"
+  fi
 fi
 # 1}}}
 
