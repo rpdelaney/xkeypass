@@ -33,7 +33,8 @@ Commands
   t, type KEY                 type the key with xdotool
 ```
 
-##To-Do
+##To-Do / known issues
+* xdokey cannot handle some symbols in passwords
 * Support arrays
 
 ##Legal
