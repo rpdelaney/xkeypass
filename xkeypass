@@ -63,10 +63,13 @@ Web site: http://github.com/rpdelaney
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
 Usage: xkeypass [OPTION] TITLE COMMAND
+or     xkeypass --password TITLE
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
+  -p, --password KEY          generate a secure password using pwgen and update
+                              KEY with the new value
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
@@ -90,6 +93,12 @@ do
     -v | --verbose)
       # Each instance of -v adds 1 to verbosity
       verbose=$((verbose+1))
+      shift
+      ;;
+    -p | --password)
+      passgen="$2"
+      key="$3"
+      shift
       shift
       ;;
     --) # End of all options
@@ -222,6 +231,11 @@ fi
 # Delete {{{1
 if [[ -n "$del" ]]; then
   cleanup
+fi
+# }}}
+# pwgen {{{
+if [[ -n "$pwgen" ]]; then
+  :
 fi
 # }}}
 # xkey type {{{1
