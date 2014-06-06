@@ -15,14 +15,14 @@ if [[ -z "$words" ]]; then
   while read words; do
     while test -n "$words"; do
       c=${words:0:1}     # Get the first character
-      xdotool key $c
+      xdotool --clearmodifiers key $c
       words=${words:1}   # trim the first character
     done
   done
 else
-  while test -n "$words"; do
+  while [[ -n "$words" ]]; do
     c=${words:0:1}     # Get the first character
-    xdotool key $c
+    xdotool --clearmodifiers key $c
     words=${words:1}   # trim the first character
   done
 fi
