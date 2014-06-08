@@ -28,7 +28,7 @@ cleanup() {
   exit 0
 }
 
-retrieve() {
+getpw() {
   local key="$1"
   local title="$2"
   local tmpfile="$3"
@@ -204,7 +204,7 @@ fi
 # Retrieve {{{1
 if [[ -n "$get" ]]; then
   verbose "Extracting $key from $title"
-  retrieve "$key" "$title" "$tmpfile"
+  getpw "$key" "$title" "$tmpfile"
 fi
 # }}}
 # Update {{{1
@@ -227,7 +227,7 @@ fi
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
   if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
-  if ! xdokey < <(retrieve "$key" "$title" "$tmpfile"); then
+  if ! xdokey < <(getpw "$key" "$title" "$tmpfile"); then
     error "FATAL: error with xdokey"
   fi
 fi
