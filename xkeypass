@@ -71,6 +71,7 @@ Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
   g, get KEY                  retrieve a key from TITLE
+  s, select KEY               print TITLE in json format to standard output
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
   t, type KEY                 type the key with xdotool
@@ -130,6 +131,12 @@ do
       ;;
     g | get)
       get="1"
+      key="$2"
+      shift
+      shift
+      ;;
+    s | select | show)
+      select="1"
       key="$2"
       shift
       shift
@@ -207,6 +214,13 @@ if [[ -n "$get" ]]; then
   getpw "$key" "$title" "$tmpfile"
 fi
 # }}}
+# select {{{1
+if [[ -n "$select" ]]; then
+  verbose "Selecting in $title"
+  pass show "$title"
+  cleanup
+fi
+# }}}
 # Update {{{1
 if [[ -n "$update" ]]; then
   verbose "Updating $key in $title with $keyvalue"
@@ -233,4 +247,7 @@ if [[ -n "$xkey" ]]; then
 fi
 # 1}}}
 
+error "ERROR: No command recognized."
+error "Use xkeypass -? for usage instructions."
+exit 1
 # vim: ft=sh foldmethod=marker :
