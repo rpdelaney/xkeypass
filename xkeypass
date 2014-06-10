@@ -28,7 +28,7 @@ cleanup() {
   exit 0
 }
 
-retrieve() {
+getpw() {
   local key="$1"
   local title="$2"
   local tmpfile="$3"
@@ -40,6 +40,21 @@ retrieve() {
   fi
   cleanup
 }
+
+updatekey() {
+  key="$1"
+  title="$2"
+  tmpfile="$3"
+  keyvalue="$4"
+
+  if pass show "$title" > "$tmpfile"; then
+    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
+    pass insert --multiline "$title" < "$tmpfile"
+  else
+    exit 1
+  fi
+}
+
 # }}}
 # Usage {{{1
 #
@@ -74,6 +89,7 @@ Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
   g, get KEY                  retrieve a key from TITLE
+  s, select KEY               print TITLE in json format to standard output
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
   t, type KEY                 type the key with xdotool
@@ -139,6 +155,12 @@ do
       ;;
     g | get)
       get="1"
+      key="$2"
+      shift
+      shift
+      ;;
+    s | select | show)
+      select="1"
       key="$2"
       shift
       shift
@@ -213,18 +235,20 @@ fi
 # Retrieve {{{1
 if [[ -n "$get" ]]; then
   verbose "Extracting $key from $title"
-  retrieve "$key" "$title" "$tmpfile"
+  getpw "$key" "$title" "$tmpfile"
+fi
+# }}}
+# select {{{1
+if [[ -n "$select" ]]; then
+  verbose "Selecting in $title"
+  pass show "$title"
+  cleanup
 fi
 # }}}
 # Update {{{1
 if [[ -n "$update" ]]; then
   verbose "Updating $key in $title with $keyvalue"
-  if pass show "$title" > "$tmpfile"; then
-    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
-    pass insert --multiline "$title" < "$tmpfile"
-  else
-    exit 1
-  fi
+  updatekey "$key" "$title" "$tmpfile" "$keyvalue"
   cleanup
 fi
 # }}}
@@ -242,10 +266,13 @@ fi
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
   if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
-  if ! xdokey < <(retrieve "$key" "$title" "$tmpfile"); then
+  if ! xdokey < <(getpw "$key" "$title" "$tmpfile"); then
     error "FATAL: error with xdokey"
   fi
 fi
 # 1}}}
 
+error "ERROR: No command recognized."
+error "Use xkeypass -? for usage instructions."
+exit 1
 # vim: ft=sh foldmethod=marker :

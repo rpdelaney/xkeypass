@@ -35,7 +35,11 @@ Commands
 
 ##To-Do / known issues
 * xdokey cannot handle some symbols in passwords
-* Support arrays
+* xdokey could theoretically expose passwords through the process name
+* Print a warning or require confirmation when a stored password would include
+  characters outside of 7-bit ASCII: this can lead to broken passwords when the
+  encoding changes for any reason
+* Support json arrays
 
 ##Legal
 This program is free software: you can redistribute it and/or modify it
