@@ -62,14 +62,14 @@ Web site: http://github.com/rpdelaney
 
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] TITLE COMMAND
-or     xkeypass --password TITLE
+Usage: xkeypass [OPTION] TITLE COMMAND KEY
+or     xkeypass --password TITLE [KEY]
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
-  -p, --password KEY          generate a secure password using pwgen and update
-                              KEY with the new value
+  -p, --password [KEY]        generate a secure password using pwgen and update
+                              KEY with the new value. Default keys is "password"
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
@@ -234,7 +234,8 @@ if [[ -n "$del" ]]; then
 fi
 # }}}
 # pwgen {{{
-if [[ -n "$pwgen" ]]; then
+if [[ -n "$passgen" ]]; then
+  # pwgen -c -n -s -1 20
   :
 fi
 # }}}
