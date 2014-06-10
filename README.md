@@ -37,6 +37,18 @@ Commands
   t, type KEY                 type the key with xdotool
 ```
 
+##Integration with X
+The `xkeypass type` command can come in handy if your window manager supports
+customizable key bindings. For example, I use the following in my i3 config:
+
+```
+bindsym $mod+w exec i3-input -F 'exec xkeypass %s type password'
+```
+
+By pressing $mod+w I can enter the record title, and xkeypass will prompt for
+the password to unlock the password store, then type the password at the
+current cursor position.
+
 ##To-Do / known issues
 * xdokey cannot handle some symbols in passwords
 * xdokey could theoretically expose passwords through the process name
