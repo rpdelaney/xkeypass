@@ -257,6 +257,7 @@ fi
 # }}}
 # pwgen {{{
 if [[ -n "$passgen" ]]; then
+  if ! type pwgen &> /dev/null; then echo "ERROR: Missing dependency: pwgen" 1>&2; exit 1; fi
   updatekey "password" "$title" "$tmpfile" "$(pwgen -c -n -s -1 20)"
   cleanup
 fi
