@@ -83,8 +83,8 @@ or     xkeypass --password TITLE [KEY]
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
-  -p, --password [KEY]        generate a secure password using pwgen and update
-                              KEY with the new value. Default keys is "password"
+  -p, --password TITLE        generate a secure password using pwgen and update
+                              "password" with the new value.
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
@@ -112,9 +112,8 @@ do
       shift
       ;;
     -p | --password)
-      passgen="$2"
-      key="$3"
-      shift
+      passgen="1"
+      key="$2"
       shift
       ;;
     --) # End of all options
@@ -199,7 +198,6 @@ if [[ -z "$title" ]]; then
   error "FATAL: record title not specified."
   exit 1
 fi
-
   # read in keyvalue
 if [[ "$keyvalue" == "-" ]]; then read -r keyvalue; fi
 # }}}
@@ -259,8 +257,8 @@ fi
 # }}}
 # pwgen {{{
 if [[ -n "$passgen" ]]; then
-  # pwgen -c -n -s -1 20
-  :
+  updatekey "password" "$title" "$tmpfile" "$(pwgen -c -n -s -1 20)"
+  cleanup
 fi
 # }}}
 # xkey type {{{1

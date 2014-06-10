@@ -19,15 +19,19 @@ To install, copy `xkeypass` into your $PATH.
 ```
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] TITLE COMMAND
+Usage: xkeypass [OPTION] TITLE COMMAND KEY
+or     xkeypass --password TITLE
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
+  -p, --password TITLE        generate a secure password using pwgen and update
+                              "password" with the new value.
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
   g, get KEY                  retrieve a key from TITLE
+  s, select KEY               print TITLE in json format to standard output
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
   t, type KEY                 type the key with xdotool
