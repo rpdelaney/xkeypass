@@ -77,11 +77,14 @@ Web site: http://github.com/rpdelaney
 
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
-Usage: xkeypass [OPTION] TITLE COMMAND
+Usage: xkeypass [OPTION] TITLE COMMAND KEY
+or     xkeypass --password TITLE [KEY]
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
+  -p, --password TITLE        generate a secure password using pwgen and update
+                              "password" with the new value.
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
@@ -106,6 +109,11 @@ do
     -v | --verbose)
       # Each instance of -v adds 1 to verbosity
       verbose=$((verbose+1))
+      shift
+      ;;
+    -p | --password)
+      passgen="1"
+      key="$2"
       shift
       ;;
     --) # End of all options
@@ -190,7 +198,6 @@ if [[ -z "$title" ]]; then
   error "FATAL: record title not specified."
   exit 1
 fi
-
   # read in keyvalue
 if [[ "$keyvalue" == "-" ]]; then read -r keyvalue; fi
 # }}}
@@ -245,6 +252,13 @@ fi
 # }}}
 # Delete {{{1
 if [[ -n "$del" ]]; then
+  cleanup
+fi
+# }}}
+# pwgen {{{
+if [[ -n "$passgen" ]]; then
+  if ! type pwgen &> /dev/null; then echo "ERROR: Missing dependency: pwgen" 1>&2; exit 1; fi
+  updatekey "password" "$title" "$tmpfile" "$(pwgen -c -n -s -1 20)"
   cleanup
 fi
 # }}}
