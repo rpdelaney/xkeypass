@@ -40,6 +40,21 @@ getpw() {
   fi
   cleanup
 }
+
+updatekey() {
+  key="$1"
+  title="$2"
+  tmpfile="$3"
+  keyvalue="$4"
+
+  if pass show "$title" > "$tmpfile"; then
+    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
+    pass insert --multiline "$title" < "$tmpfile"
+  else
+    exit 1
+  fi
+}
+
 # }}}
 # Usage {{{1
 #
@@ -224,12 +239,7 @@ fi
 # Update {{{1
 if [[ -n "$update" ]]; then
   verbose "Updating $key in $title with $keyvalue"
-  if pass show "$title" > "$tmpfile"; then
-    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
-    pass insert --multiline "$title" < "$tmpfile"
-  else
-    exit 1
-  fi
+  updatekey "$key" "$title" "$tmpfile" "$keyvalue"
   cleanup
 fi
 # }}}
