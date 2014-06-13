@@ -91,7 +91,7 @@ Commands
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
   t, type KEY                 type the key with xdotool
-  p, password TITLE [LENGTH]  generate a secure password using pwgen and update
+  p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
 EOD
 exit 1
