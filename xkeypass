@@ -42,10 +42,10 @@ getpw() {
 }
 
 updatekey() {
-  key="$1"
-  title="$2"
-  tmpfile="$3"
-  keyvalue="$4"
+  local key="$1"
+  local title="$2"
+  local tmpfile="$3"
+  local keyvalue="$4"
 
   if pass show "$title" > "$tmpfile"; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
