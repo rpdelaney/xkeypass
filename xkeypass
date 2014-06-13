@@ -78,13 +78,11 @@ Web site: http://github.com/rpdelaney
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
 Usage: xkeypass [OPTION] TITLE COMMAND KEY
-or     xkeypass --password TITLE [KEY]
 
 Options
   -?, --help                  print this help and exit
   -v, --verbose               increase verbosity of debugging output
-  -p, --password TITLE        generate a secure password using pwgen and update
-                              "password" with the new value.
+
 Commands
   a, add                      create a new record named TITLE
   d, del KEY                  delete a key from TITLE
@@ -93,6 +91,8 @@ Commands
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
   t, type KEY                 type the key with xdotool
+  p, password TITLE [LENGTH]  generate a secure password using pwgen and update
+                              "password" with the new value.
 EOD
 exit 1
 }
@@ -110,11 +110,9 @@ do
       # Each instance of -v adds 1 to verbosity
       verbose=$((verbose+1))
       shift
-      ;;
-    -p | --password)
-      passgen="1"
-      key="$2"
-      shift
+      if [[ "$verbose" -ge '2' ]]; then
+        set -x
+      fi
       ;;
     --) # End of all options
       shift
@@ -178,6 +176,12 @@ do
       shift
       shift
       ;;
+    p | password)
+      passgen="1"
+      passlen="$2"
+      shift
+      shift
+      ;;
     --) # End of all commands
       shift
       break
@@ -213,11 +217,11 @@ verbose "tmpfile is: $tmpfile"
 trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
 # }}}
 # Debugging output {{{1
-if [[ "$verbose" == '2' ]]; then
+if [[ "$verbose" -ge '2' ]]; then
+  set -x
   echo "get is: $get"
   echo "key is: $key"
   echo "title is: $title"
-  set -x
 fi
 # }}}
 # Create {{{1
@@ -255,10 +259,15 @@ if [[ -n "$del" ]]; then
   cleanup
 fi
 # }}}
-# pwgen {{{
+# Generate {{{
+if [[ -z "$passlen" ]]; then
+  # If a password length was not specified, default to 20
+  passlen=20
+fi
+
 if [[ -n "$passgen" ]]; then
   if ! type pwgen &> /dev/null; then echo "ERROR: Missing dependency: pwgen" 1>&2; exit 1; fi
-  updatekey "password" "$title" "$tmpfile" "$(pwgen -c -n -s -1 20)"
+  updatekey "password" "$title" "$tmpfile" "$(pwgen -c -n -s -1 "$passlen")"
   cleanup
 fi
 # }}}
