@@ -42,13 +42,15 @@ getpw() {
 }
 
 updatekey() {
-  local key="$1"
-  local title="$2"
-  local tmpfile="$3"
-  local keyvalue="$4"
+  key="$1"
+  title="$2"
+  tmpfile="$3"
+  keyvalue="$4"
+  epoch="$(date +%s)"
 
   if pass show "$title" > "$tmpfile"; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
+    jshon -I -s "$epoch" -i "updated" -F "$tmpfile"
     pass insert --multiline "$title" < "$tmpfile"
   else
     exit 1
