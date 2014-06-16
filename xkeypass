@@ -8,7 +8,6 @@
 # software.
 #
 # TODO: Collapse multiple invocations of `shift` using `shift INT`
-# TODO: 'update' command should update the 'updated' field with the current date, if the edited field was 'password' or 'pass'
 
 # Functions {{{1
 verbose() {
