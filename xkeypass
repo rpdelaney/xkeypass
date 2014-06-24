@@ -23,12 +23,14 @@ error() {
 cleanup() {
   # Remove the temporary files
   verbose "Removing tmpfile: $tmpfile $tmpfile2"
-  if [[ -f "$tmpfile" ]] && rm -f "$tmpfile" "$tmpfile2"; then
-    exit 0
-  else
-    error 'EMERGENCY! Error while cleaning temporary files!'
-    error "$tmpfile"
-    error "$tmpfile2"
+  if [[ -f "$tmpfile" ]] ; then
+    if ( shred "$tmpfile" "$tmpfile2" 2> /dev/null ; rm -f "$tmpfile" "$tmpfile2" ); then
+      exit 0
+    else
+      error 'EMERGENCY! Error while cleaning temporary files!'
+      error "$tmpfile"
+      error "$tmpfile2"
+    fi
   fi
 }
 
