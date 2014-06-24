@@ -21,13 +21,14 @@ error() {
 }
 
 cleanup() {
-  # Remove the temporary file
+  # Remove the temporary files
   verbose "Removing tmpfile: $tmpfile"
   [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
   exit 0
 }
 
 getpw() {
+  # Retrieve key $1 from record title $2 and store it in tmpfile $3
   local key="$1"
   local title="$2"
   local tmpfile="$3"
@@ -41,6 +42,7 @@ getpw() {
 }
 
 updatekey() {
+  # Update key $1 in record title $2 using tmpfile $3 with new keyvalue $4
   key="$1"
   title="$2"
   tmpfile="$3"
