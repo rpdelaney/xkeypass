@@ -22,8 +22,8 @@ error() {
 
 cleanup() {
   # Remove the temporary files
-  verbose "Removing tmpfile: $tmpfile"
-  [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
+  verbose "Removing tmpfile: $tmpfile $tmpfile2"
+  [[ -f "$tmpfile" ]] && rm -f "$tmpfile" "$tmpfile2"
   exit 0
 }
 
@@ -57,7 +57,6 @@ updatekey() {
     exit 1
   fi
 }
-
 # }}}
 # Usage {{{1
 #
@@ -214,8 +213,10 @@ pass &> /dev/null || ( echo "FATAL. Missing dependency: pass" && exit 1 )
 # }}}
 # Build sandbox {{{1
 tmpfile="$(mktemp --suffix=.pass)"
+tmpfile2="$(mktemp --suffix=.pass)"
 chmod 0600 "$tmpfile"
-verbose "tmpfile is: $tmpfile"
+chmod 0600 "$tmpfile2"
+verbose "tmpfile is: $tmpfile $tmpfile2"
   # Clean up before exiting for any reason whatsoever
 trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
 # }}}
