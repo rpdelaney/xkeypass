@@ -230,6 +230,7 @@ if [[ -n "$add" ]]; then
   verbose "Inserting new record in $title"
   pass insert "$title" --multiline << EOF
 {
+  "created": "`date +%s`"
 }
 EOF
   cleanup
