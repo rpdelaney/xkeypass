@@ -6,15 +6,19 @@ stored with password-store.
 * [Website](https://github.com/rpdelaney/xkeypass)
 
 ##Installation
+To install, copy `xkeypass` into your $PATH.
+
 #####Dependencies
 xkeypass depends on:
 
-* [xdotool](http://www.semicomplete.com/projects/xdotool/) by Jordan Sissel
 * [password-store](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld
 * [jshon](http://kmkeen.com/jshon/) by Kyle Keen
 
-To install, copy `xkeypass` into your $PATH.
+Optional dependency:
 
+* [xdotool](http://www.semicomplete.com/projects/xdotool/) by Jordan Sissel
+
+If xdotool is not available, xkeypass won't be able to type passwords.
 ##Usage
 ```
 xkeypass acts as a front-end to pass, extracting stored json data types.
