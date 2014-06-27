@@ -272,9 +272,8 @@ fi
 # }}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
-  if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
-  if ! xdokey < <(getpw "$key" "$title"); then
-    error "FATAL: error with xdokey"
+  if ! xdotool - < <(getpw "$key" "$title"); then
+    error "FATAL: error with xdotool"
   fi
 fi
 # 1}}}
