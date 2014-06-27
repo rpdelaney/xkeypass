@@ -1,6 +1,6 @@
 ##xkeypass
 A command-line tool that performs CRUD operations on json-formatted records
-stored with pass.
+stored with password-store.
 
 #####Website
 * [Website](https://github.com/rpdelaney/xkeypass)
@@ -10,7 +10,7 @@ stored with pass.
 xkeypass depends on:
 
 * [xdotool](http://www.semicomplete.com/projects/xdotool/) by Jordan Sissel
-* [pass](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld
+* [password-store](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld
 * [jshon](http://kmkeen.com/jshon/) by Kyle Keen
 
 To install, copy `xkeypass` into your $PATH.
@@ -45,8 +45,8 @@ customizable key bindings. For example, I use the following in my i3 config:
 bindsym $mod+w exec i3-input -F 'exec xkeypass %s type password'
 ```
 
-By pressing $mod+w I can enter the record title, and xkeypass will prompt for
-the password to unlock the password store, then type the password at the
+By pressing $mod+w I can enter the record title. pinentry will prompt for the
+password to unlock the password store, then xkeypass types the password at the
 current cursor position.
 
 ##To-Do / known issues
