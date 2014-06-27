@@ -223,8 +223,8 @@ fi
 if [[ "$keyvalue" == "-" ]]; then read -r keyvalue; fi
 # }}}
 # Dependencies {{{1
-jshon &> /dev/null || ( echo "FATAL. Missing dependency: jshon" && exit 1 )
-pass &> /dev/null || ( echo "FATAL. Missing dependency: pass" && exit 1 )
+if ! type jshon &> /dev/null; then echo "ERROR: Missing dependency: jshon" 1>&2; exit 1; fi
+if ! type pass &> /dev/null; then echo "ERROR: Missing dependency: password-store" 1>&2; exit 1; fi
 # }}}
 # Build sandbox {{{1
 tmpfile="$(mktemp --suffix=.pass)"
