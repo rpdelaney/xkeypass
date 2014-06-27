@@ -21,13 +21,21 @@ error() {
 }
 
 cleanup() {
-  # Remove the temporary file
-  verbose "Removing tmpfile: $tmpfile"
-  [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
-  exit 0
+  # Remove the temporary files
+  verbose "Removing tmpfile: $tmpfile $tmpfile2"
+  if [[ -f "$tmpfile" ]] ; then
+    if ( shred "$tmpfile" "$tmpfile2" 2> /dev/null ; rm -f "$tmpfile" "$tmpfile2" ); then
+      exit 0
+    else
+      error 'EMERGENCY! Error while cleaning temporary files!'
+      error "$tmpfile"
+      error "$tmpfile2"
+    fi
+  fi
 }
 
 getpw() {
+  # Retrieve key $1 from record title $2 and store it in tmpfile $3
   local key="$1"
   local title="$2"
   local tmpfile="$3"
@@ -41,6 +49,7 @@ getpw() {
 }
 
 updatekey() {
+  # Update key $1 in record title $2 using tmpfile $3 with new keyvalue $4
   key="$1"
   title="$2"
   tmpfile="$3"
@@ -55,7 +64,6 @@ updatekey() {
     exit 1
   fi
 }
-
 # }}}
 # Usage {{{1
 #
@@ -220,8 +228,10 @@ pass &> /dev/null || ( echo "FATAL. Missing dependency: pass" && exit 1 )
 # }}}
 # Build sandbox {{{1
 tmpfile="$(mktemp --suffix=.pass)"
+tmpfile2="$(mktemp --suffix=.pass)"
 chmod 0600 "$tmpfile"
-verbose "tmpfile is: $tmpfile"
+chmod 0600 "$tmpfile2"
+verbose "tmpfile is: $tmpfile $tmpfile2"
   # Clean up before exiting for any reason whatsoever
 trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
 # }}}
