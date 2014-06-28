@@ -62,6 +62,14 @@ updatekey() {
     exit 1
   fi
 }
+
+titlefound() {
+  if pass ls | grep -q "$title"; then
+    return 0
+  else
+    return 1
+  fi
+}
 # }}}
 # Usage {{{1
 #
