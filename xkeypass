@@ -272,9 +272,11 @@ fi
 # }}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
-  if ! xdotool - < <(getpw "$key" "$title"); then
+  if ! echo "type $(getpw "$key" "$title")" | xdotool - ; then
     error "FATAL: error with xdotool"
+    exit 1
   fi
+  cleanup
 fi
 # 1}}}
 
