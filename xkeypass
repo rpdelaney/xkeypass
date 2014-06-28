@@ -38,12 +38,10 @@ getpw() {
   # Retrieve key $1 from record title $2 and store it in tmpfile $3
   local key="$1"
   local title="$2"
-  local tmpfile="$3"
 
-  if pass show "$title" > "$tmpfile"; then
-    jshon -e "$key" -u -F "$tmpfile"
-  else
-    error "$(cat "$tmpfile")"
+  if ! pass show "$title" | jshon -e "$key" -u ; then
+    error "We failed to retrieve the password."
+    exit 1
   fi
   cleanup
 }
@@ -257,7 +255,7 @@ fi
 # Retrieve {{{1
 if [[ -n "$get" ]]; then
   verbose "Extracting $key from $title"
-  getpw "$key" "$title" "$tmpfile"
+  getpw "$key" "$title"
 fi
 # }}}
 # select {{{1
@@ -293,10 +291,11 @@ fi
 # }}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
-  if ! type xdokey &> /dev/null; then echo "ERROR: Missing dependency: xdokey" 1>&2; exit 1; fi
-  if ! xdokey < <(getpw "$key" "$title" "$tmpfile"); then
-    error "FATAL: error with xdokey"
+  if ! echo "type $(getpw "$key" "$title")" | xdotool - ; then
+    error "FATAL: error with xdotool"
+    exit 1
   fi
+  cleanup
 fi
 # 1}}}
 
