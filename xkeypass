@@ -258,7 +258,7 @@ if [[ -n "$get" ]]; then
   getpw "$key" "$title"
 fi
 # }}}
-# select {{{1
+# Select {{{1
 if [[ -n "$select" ]]; then
   verbose "Selecting in $title"
   pass show "$title"
@@ -284,7 +284,7 @@ if [[ -z "$passlen" ]]; then
 fi
 
 if [[ -n "$passgen" ]]; then
-  if ! type pwgen &> /dev/null; then echo "ERROR: Missing dependency: pwgen" 1>&2; exit 1; fi
+  if ! type pwgen &> /dev/null; then echo "FATAL: Missing dependency: pwgen" 1>&2; exit 1; fi
   updatekey "password" "$title" "$tmpfile" "$(pwgen -y -c -n -s -1 "$passlen")"
   cleanup
 fi
