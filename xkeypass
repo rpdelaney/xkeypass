@@ -218,7 +218,7 @@ if [[ -z "$title" ]]; then
   exit 1
 fi
 
-if ! pass ls | grep -q "$title" && test -z "$add"; then
+if ! titlefound && [[ -z "$add" ]]; then
   # Verify that the given record title exists in password-store
   error "FATAL: record title not found."
   error "Try 'pass ls' for a list of available records."
@@ -251,6 +251,8 @@ fi
 # }}}
 # Create {{{1
 if [[ -n "$add" ]]; then
+  # Verify the title does not exist
+  if titlefound; then error "FATAL: Record title already exists."; exit 1; fi
   verbose "Inserting new record in $title"
   pass insert "$title" --multiline << EOF
 {
