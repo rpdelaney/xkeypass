@@ -48,11 +48,11 @@ getpw() {
 
 updatekey() {
   # Update key $1 in record title $2 using tmpfile $3 with new keyvalue $4
-  key="$1"
-  title="$2"
-  tmpfile="$3"
-  keyvalue="$4"
-  epoch="$(date +%s)"
+  local key="$1"
+  local title="$2"
+  local tmpfile="$3"
+  local keyvalue="$4"
+  local epoch="$(date +%s)"
 
   if pass show "$title" > "$tmpfile"; then
     jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
@@ -64,7 +64,7 @@ updatekey() {
 }
 
 titlefound() {
-  if pass ls | grep -q "$title"; then
+  if pass ls | grep -q "$1"; then
     return 0
   else
     return 1
@@ -218,7 +218,7 @@ if [[ -z "$title" ]]; then
   exit 1
 fi
 
-if ! titlefound && [[ -z "$add" ]]; then
+if ! titlefound "$title" && [[ -z "$add" ]]; then
   # Verify that the given record title exists in password-store
   error "FATAL: record title not found."
   error "Try 'pass ls' for a list of available records."
@@ -252,7 +252,7 @@ fi
 # Create {{{1
 if [[ -n "$add" ]]; then
   # Verify the title does not exist
-  if titlefound; then error "FATAL: Record title already exists."; exit 1; fi
+  if titlefound "$title" ; then error "FATAL: Record title already exists."; exit 1; fi
   verbose "Inserting new record in $title"
   pass insert "$title" --multiline << EOF
 {
