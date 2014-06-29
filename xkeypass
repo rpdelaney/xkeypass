@@ -20,22 +20,8 @@ error() {
   echo "$1" >&2
 }
 
-cleanup() {
-  # Remove the temporary files
-  verbose "Removing tmpfile: $tmpfile $tmpfile2"
-  if [[ -f "$tmpfile" ]] ; then
-    if ( shred "$tmpfile" "$tmpfile2" 2> /dev/null ; rm -f "$tmpfile" "$tmpfile2" ); then
-      exit 0
-    else
-      error 'EMERGENCY! Error while cleaning temporary files!'
-      error "$tmpfile"
-      error "$tmpfile2"
-    fi
-  fi
-}
-
 getpw() {
-  # Retrieve key $1 from record title $2 and store it in tmpfile $3
+  # Retrieve key $1 from record title $2 and return it
   local key="$1"
   local title="$2"
 
@@ -43,21 +29,17 @@ getpw() {
     error "We failed to retrieve the password."
     exit 1
   fi
-  cleanup
 }
 
 updatekey() {
   # Update key $1 in record title $2 using tmpfile $3 with new keyvalue $4
   local key="$1"
   local title="$2"
-  local tmpfile="$3"
-  local keyvalue="$4"
+  local keyvalue="$3"
   local epoch="$(date +%s)"
 
-  if pass show "$title" > "$tmpfile"; then
-    jshon -I -s "$keyvalue" -i "$key" -F "$tmpfile"
-    jshon -I -s "$epoch" -i "updated" -F "$tmpfile"
-    pass insert --multiline "$title" < "$tmpfile"
+  if titlefound "$title"; then
+    pass insert --multiline "$title" < <(pass show "$title" | jshon -s "$keyvalue" -i "$key" -s "$epoch" -i "updated")
   else
     exit 1
   fi
@@ -232,15 +214,6 @@ if [[ "$keyvalue" == "-" ]]; then read -r keyvalue; fi
 if ! type jshon &> /dev/null; then echo "ERROR: Missing dependency: jshon" 1>&2; exit 1; fi
 if ! type pass &> /dev/null; then echo "ERROR: Missing dependency: password-store" 1>&2; exit 1; fi
 # }}}
-# Build sandbox {{{1
-tmpfile="$(mktemp --suffix=.pass)"
-tmpfile2="$(mktemp --suffix=.pass)"
-chmod 0600 "$tmpfile"
-chmod 0600 "$tmpfile2"
-verbose "tmpfile is: $tmpfile $tmpfile2"
-  # Clean up before exiting for any reason whatsoever
-trap 'cleanup' INT QUIT TERM EXIT 0 1 2 3 6 9 14 15
-# }}}
 # Debugging output {{{1
 if [[ "$verbose" -ge '2' ]]; then
   set -x
@@ -259,32 +232,31 @@ if [[ -n "$add" ]]; then
   "created": "`date +%s`"
 }
 EOF
-  cleanup
+  exit 0
 fi
 # }}}
 # Retrieve {{{1
 if [[ -n "$get" ]]; then
   verbose "Extracting $key from $title"
-  getpw "$key" "$title"
+  getpw "$key" "$title" && exit 0 || exit 1
 fi
 # }}}
 # Select {{{1
 if [[ -n "$select" ]]; then
   verbose "Selecting in $title"
-  pass show "$title"
-  cleanup
+  pass show "$title" && exit 0 || exit 1
 fi
 # }}}
 # Update {{{1
 if [[ -n "$update" ]]; then
   verbose "Updating $key in $title with $keyvalue"
-  updatekey "$key" "$title" "$tmpfile" "$keyvalue"
-  cleanup
+  updatekey "$key" "$title" "$keyvalue" && exit 0 || exit 1
 fi
 # }}}
 # Delete {{{1
 if [[ -n "$del" ]]; then
-  cleanup
+  error "This doesn't do anything yet."
+  exit 1
 fi
 # }}}
 # Generate {{{
@@ -295,17 +267,12 @@ fi
 
 if [[ -n "$passgen" ]]; then
   if ! type pwgen &> /dev/null; then echo "FATAL: Missing dependency: pwgen" 1>&2; exit 1; fi
-  updatekey "password" "$title" "$tmpfile" "$(pwgen -y -c -n -s -1 "$passlen")"
-  cleanup
+  updatekey "password" "$title" "$(pwgen -y -c -n -s -1 "$passlen")" && exit 0 || exit 1
 fi
 # }}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
-  if ! echo "type $(getpw "$key" "$title")" | xdotool - ; then
-    error "FATAL: error with xdotool"
-    exit 1
-  fi
-  cleanup
+  echo "type $(getpw "$key" "$title")" | xdotool - && exit 0 || exit 1
 fi
 # 1}}}
 
