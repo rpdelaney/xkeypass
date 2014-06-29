@@ -260,10 +260,8 @@ if [[ -n "$del" ]]; then
 fi
 # }}}
 # Generate {{{
-if [[ -z "$passlen" ]]; then
   # If a password length was not specified, default to 20
-  passlen=20
-fi
+passlen=${passlen:-20}
 
 if [[ -n "$passgen" ]]; then
   if ! type pwgen &> /dev/null; then echo "FATAL: Missing dependency: pwgen" 1>&2; exit 1; fi
