@@ -7,7 +7,6 @@
 # See the README file for additional terms and conditions on your use of this
 # software.
 #
-# TODO: Collapse multiple invocations of `shift` using `shift INT`
 
 # Functions {{{1
 verbose() {
@@ -229,7 +228,7 @@ if [[ -n "$add" ]]; then
   verbose "Inserting new record in $title"
   pass insert "$title" --multiline << EOF
 {
-  "created": "`date +%s`"
+  "created": "$(date +%s)"
 }
 EOF
   exit 0
