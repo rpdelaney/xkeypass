@@ -276,7 +276,8 @@ fi
 # }}}
 # Clip {{{1
 if [[ -n "$clip" ]]; then
-  if ! type xclip &> /dev/null; then echo "ERROR: Missing dependency: xclip" 1>&2; exit 1; fi
+  if ! type xclip &> /dev/null; then error "ERROR: Missing dependency: xclip" ; exit 1; fi
+  if [[ -z "$DISPLAY" ]]; then error "ERROR: DISPLAY environment variable not set."; exit 1; fi
   getpw "$key" "$title" | xclip -selection clipboard
   exit 0
 fi
