@@ -39,6 +39,7 @@ Commands
   t, type KEY                 type the key with xdotool
   p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
+  c, clip KEY                 copy KEY to the X clipboard
 ```
 
 ##Integration with X
