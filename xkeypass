@@ -89,6 +89,7 @@ Commands
   t, type KEY                 type the key with xdotool
   p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
+  c, clip KEY                 copy KEY to the X clipboard
 EOD
 exit 1
 }
@@ -175,6 +176,12 @@ do
     p | password)
       passgen="1"
       passlen="$2"
+      shift
+      shift
+      ;;
+    c | clip)
+      clip="1"
+      key="$2"
       shift
       shift
       ;;
@@ -267,6 +274,13 @@ if [[ -n "$passgen" ]]; then
   updatekey "password" "$title" "$(pwgen -y -c -n -s -1 "$passlen")" && exit 0 || exit 1
 fi
 # }}}
+# Clip {{{1
+if [[ -n "$clip" ]]; then
+  if ! type xclip &> /dev/null; then echo "ERROR: Missing dependency: xclip" 1>&2; exit 1; fi
+  getpw "$key" "$title" | xclip -selection clipboard
+  exit 0
+fi
+#1}}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
   echo "type $(getpw "$key" "$title")" | xdotool - && exit 0 || exit 1
