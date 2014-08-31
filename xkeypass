@@ -277,12 +277,17 @@ fi
 # Clip {{{1
 if [[ -n "$clip" ]]; then
   if ! type xclip &> /dev/null; then error "ERROR: Missing dependency: xclip" ; exit 1; fi
-  if [[ -z "$DISPLAY" ]]; then error "ERROR: DISPLAY environment variable not set."; exit 1; fi
+  if [[ -z "$DISPLAY" ]]; then 
+    error "ERROR: DISPLAY environment variable not set."
+    exit 1
+  else
+    clipselection="clipboard"
+  fi
     # Retrieve the key and save it to the clipboard
-  xclip -in -selection clipboard < <( getpw "$key" "$title" )
+  xclip -in -selection "$clipselection" < <( getpw "$key" "$title" )
     # Wait 15 seconds, then clear the clipboard
   sleep 15s
-  xclip -in -selection clipboard <<< ''
+  xclip -in -selection "$clipselection" <<< ''
   exit 0
 fi
 #1}}}
