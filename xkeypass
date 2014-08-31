@@ -84,6 +84,7 @@ Commands
   t, type KEY                 type the key with xdotool
   p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
+  c, clip KEY                 copy KEY to the X clipboard
 EOD
 exit 1
 }
@@ -170,6 +171,12 @@ do
     p | password)
       passgen="1"
       passlen="$2"
+      shift
+      shift
+      ;;
+    c | clip)
+      clip="1"
+      key="$2"
       shift
       shift
       ;;
@@ -262,6 +269,23 @@ if [[ -n "$passgen" ]]; then
   updatekey "password" "$title" "$(pwgen -y -c -n -s -1 "$passlen")" && exit 0 || exit 1
 fi
 # }}}
+# Clip {{{1
+if [[ -n "$clip" ]]; then
+  if ! type xclip &> /dev/null; then error "ERROR: Missing dependency: xclip" ; exit 1; fi
+  if [[ -z "$DISPLAY" ]]; then 
+    error "ERROR: DISPLAY environment variable not set."
+    exit 1
+  else
+    clipselection="clipboard"
+  fi
+    # Retrieve the key and save it to the clipboard
+  xclip -in -selection "$clipselection" < <( getpw "$key" "$title" )
+    # Wait 15 seconds, then clear the clipboard
+  sleep 15s
+  xclip -in -selection "$clipselection" <<< ''
+  exit 0
+fi
+#1}}}
 # xkey type {{{1
 if [[ -n "$xkey" ]]; then
   echo "type $(getpw "$key" "$title")" | xdotool - && exit 0 || exit 1
