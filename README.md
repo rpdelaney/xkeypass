@@ -59,6 +59,7 @@ current cursor position.
   characters outside of 7-bit ASCII: this can lead to broken passwords when the
   encoding changes for any reason
 * Support json arrays
+* Doesn't type whitespace characters if they are found in the key
 
 ##Legal
 This program is free software: you can redistribute it and/or modify it
