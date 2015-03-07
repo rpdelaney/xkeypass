@@ -203,7 +203,7 @@ fi
 
 if ! titlefound "$title" && [[ -z "$add" ]]; then
   # Verify that the given record title exists in password-store
-  error "FATAL: record title not found."
+  error "FATAL: record title not found: $title"
   error "Try 'pass ls' for a list of available records."
   exit 1
 fi
