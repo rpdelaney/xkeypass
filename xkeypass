@@ -50,7 +50,9 @@ updatekey() {
 }
 
 titlefound() {
-  if pass ls | grep -q "$1"; then
+  local title="$1"
+
+  if pass ls | grep -q "$title"; then
     return 0
   else
     return 1
