@@ -49,6 +49,19 @@ updatekey() {
   fi
 }
 
+deletekey() {
+  # Remove key #1 in record title $2
+  local key="$1"
+  local title="$2"
+  local epoch="$(date +%s)"
+
+  if titlefound "$title"; then
+    pass insert --multiline "$title" < <(pass show "$title" | jshon -d "$key" -s "$epoch" -i "updated")
+  else
+    exit 1
+  fi
+}
+
 titlefound() {
   local title="$1"
 
@@ -142,6 +155,7 @@ do
       ;;
     d | del)
       del="$1"
+      key="$2"
       shift
       ;;
     g | get)
@@ -258,8 +272,9 @@ fi
 # }}}
 # Delete {{{1
 if [[ -n "$del" ]]; then
-  error "This doesn't do anything yet."
-  exit 1
+  verbose "Deleting key $key in $title"
+  deletekey "$key" "$title" || exit 1
+  exit 0
 fi
 # }}}
 # Generate {{{
