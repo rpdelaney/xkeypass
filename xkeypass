@@ -36,7 +36,7 @@ getpw() {
 }
 
 updatekey() {
-  # Update key $1 in record title $2 using tmpfile $3 with new keyvalue $4
+  # Update key $1 in record title $2 with new keyvalue $3
   local key="$1"
   local title="$2"
   local keyvalue="$3"
