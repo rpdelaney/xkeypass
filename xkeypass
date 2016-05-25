@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # GNU bash, version 4.3.8(1)-release (x86_64-unknown-linux-gnu)
 #
-# © Copyright 2014 Ryan Delaney.
+# © Copyright 2014-16 Ryan Delaney.
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation, either version 3 of the License, or (at your
@@ -76,11 +76,6 @@ titlefound() {
 #
 usage() {
 cat <<EOD
-xkeypass
-© Copyright 2014 Ryan Delaney.
-
-Web site: http://github.com/rpdelaney
-
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
 Usage: xkeypass [OPTION] TITLE COMMAND KEY
