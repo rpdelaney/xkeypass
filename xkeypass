@@ -62,6 +62,17 @@ deletekey() {
   fi
 }
 
+drop() {
+  # Remove title $1
+  local title="$1"
+
+  if titlefound "$title"; then
+    pass rm --force "$title"
+  else
+    exit 1
+  fi
+}
+
 titlefound() {
   local title="$1"
 
@@ -91,6 +102,7 @@ Commands
   s, select KEY               print TITLE in json format to standard output
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
+  x, drop                     remove the record TITLE from the password store
   t, type KEY                 type the key with xdotool
   p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
@@ -151,6 +163,10 @@ do
     d | del)
       del="$1"
       key="$2"
+      shift
+      ;;
+    x | drop | rm)
+      drop="$1"
       shift
       ;;
     g | get)
@@ -272,6 +288,13 @@ if [[ -n "$del" ]]; then
   exit 0
 fi
 # }}}
+# Drop {{{1
+if [[ -n "$drop" ]]; then
+  verbose "Dropping $title"
+  drop "$title" || exit 1
+  exit 0
+fi
+# Drop 1}}}
 # Generate {{{
   # If a password length was not specified, default to 20
 passlen=${passlen:-20}

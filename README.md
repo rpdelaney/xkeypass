@@ -36,6 +36,7 @@ Commands
   s, select KEY               print TITLE in json format to standard output
   u, update KEY VALUE         update or create a key in TITLE. if VALUE is -
                               then read from standard input
+  x, drop                     remove the record TITLE from the password store
   t, type KEY                 type the key with xdotool
   p, password [LENGTH]        generate a secure password using pwgen and update
                               "password" with the new value.
