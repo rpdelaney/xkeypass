@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# GNU bash, version 4.3.42(1)-release
+#
+
+# Functions {{{1
+# debug() {{{2
+debug() {
+  # $1 is the message to be printed
+  local message="$1"
+
+  echo "[DEBUG] $message" >&2 || return 1
+}
+# debug() 2}}}
+# info() {{{2
+info() {
+  # $1 is the message to be printed
+  local message="$1"
+
+  echo "[INFO] $message" >&2 || return 1
+}
+# info() 2}}}
+# error() {{{2
+error() {
+  # $1 is the message to be printed
+  local message="$1"
+
+  if [ -z "$quiet" ]; then
+    echo "[ERROR] $message" >&2 || return 1
+  fi
+}
+# error() 2}}}
+# hr() {{{2
+hr() {
+  printf '%s\n' '--------------------------------------------------------------'
+}
+# hr() 2}}}
+# Functions 1}}}
+
+# Initialize the testing environment {{{1
+scriptdir="$(dirname "$0")" || exit 1
+# Set PASSWORD_STORE_DIR {{{2
+PASSWORD_STORE_DIR="$scriptdir/password-store"
+
+if [[ ! -d "$PASSWORD_STORE_DIR" ]]; then
+  info "PASSWORD_STORE_DIR not found, creating..."
+  mkdir "$PASSWORD_STORE_DIR" || exit 1
+fi
+debug "PASSWORD_STORE_DIR is $PASSWORD_STORE_DIR"
+# 2}}} Set PASSWORD_STORE_DIR 
+# Set PGPPATH {{{2
+PGPPATH="$scriptdir/gnupg"
+
+if [[ ! -d "$PGPPATH" ]]; then
+  info "PGPPATH not found, creating...."
+  mkdir "$PGPPATH" || exit 1
+fi
+debug "PGPPATH is $PGPPATH"
+# Set PGPPATH 2}}}
+# Set GNUPGHOME {{{2
+GNUPGHOME="$scriptdir/gnupg"
+
+if [[ ! -d "$GNUPGHOME" ]]; then
+  info "GNUPGHOME not found, creating...."
+  mkdir "$GNUPGHOME" || exit 1
+fi
+debug "GNUPGHOME is $GNUPGHOME"
+# 2}}} Set GNUPGHOME
+# Set PASSWORD_STORE_KEY {{{2
+PASSWORD_STORE_KEY="B6380DCE11692B16"
+# Set PASSWORD_STORE_KEY 2}}}
+# Verify gpg key {{{2
+if ! gpg -K --with-colons | grep -s -q "$PASSWORD_STORE_KEY"; then
+  error "Testing GPG key $PASSWORD_STORE_KEY was not found in the keyring. Aborting."
+  exit 1
+else
+  debug "GPG key B6380DCE11692B16 found."
+fi
+# 2}}} Verify gpg key
+# Initialize the testing environment 1}}} 
+
+# Perform tests {{{1
+hr
+errors="0"
+
+# Test 1 -- Get {{{2
+test1_output="$(../xkeypass test1 get test1)" || exit 1
+test1_expect="123"
+if [[ "$test1_output" != "$test1_expect" ]]; then
+  error "Test 1 failed."
+  error "Expected: $test1_expect"
+  error "Output was: $test1_output"
+  ((errors++))
+fi
+# Test 1 2}}}
+# Test 2 -- Update {{{2
+echo "124" | ../xkeypass test1 update test4 - 1> /dev/null
+test2_output="$(../xkeypass test1 get test4)"
+test2_expect="124"
+if [[ "$test2_output" != "$test2_expect" ]]; then
+  error "Test 2 failed."
+  error "Expected: $test2_expect"
+  error "Output was: $test2_output"
+fi
+# Test 2 2}}}
+# Test 3 -- Delete {{{2
+../xkeypass test1 del test4 1> /dev/null
+test3_output="$(../xkeypass test1 get test4 &> /dev/null)"
+if [[ -n "$test3_output" ]]; then
+  error "Test 3 failed."
+  error "Expected: "
+  error "Output was: $test3_output"
+fi
+# Test 3 2}}}
+# Test 4 -- Add {{{2
+../xkeypass test999 add > /dev/null || exit 1
+if ! pass ls | grep -sq test999; then
+  error "Test 4 failed."
+  error "Created object could not be found."
+  ((errors+++))
+fi
+# Test 4 2}}}
+# Test 5 -- Drop {{{2
+../xkeypass -v test999 drop &> /dev/null
+if pass ls | grep -sq test999; then
+  error "Test 5 failed."
+  error "Dropped object was found in the password store."
+  ((errors++))
+fi
+# Test 5 2}}}
+# Perform tests 1}}}
+
+# Report final status {{{1
+if [[ "$errors" -ne 0 ]]; then hr; fi
+
+if [[ "$errors" -eq 0 ]]; then
+  info "SUCCESS. All tests passed."
+else
+  error "FAILURE. $errors test failure(s)."
+fi
+# Report final status 1}}}
+
+# vim: filetype=sh foldmethod=marker shiftwidth=2 expandtab softtabstop=4:
