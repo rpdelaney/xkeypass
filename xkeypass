@@ -29,7 +29,7 @@ getpw() {
   local key="$1"
   local title="$2"
 
-  if ! pass show "$title" | jshon -e "$key" -u ; then
+  if ! pass show "$title" | jq ."$key" -r ; then
     error "We failed to retrieve the password."
     exit 1
   fi
