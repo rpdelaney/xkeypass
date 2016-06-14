@@ -100,6 +100,7 @@ if [[ "$test2_output" != "$test2_expect" ]]; then
   error "Test 2 failed."
   error "Expected: $test2_expect"
   error "Output was: $test2_output"
+  ((errors++))
 fi
 # Test 2 2}}}
 # Test 3 -- Delete {{{2
@@ -109,6 +110,7 @@ if [[ -n "$test3_output" ]]; then
   error "Test 3 failed."
   error "Expected: "
   error "Output was: $test3_output"
+  ((errors++))
 fi
 # Test 3 2}}}
 # Test 4 -- Add {{{2
