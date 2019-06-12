@@ -1,14 +1,18 @@
-##xkeypass
+# xkeypass
+
 A command-line tool that performs CRUD operations on json-formatted records
 stored with password-store.
 
-#####Website
+## Website
+
 * [Website](https://github.com/rpdelaney/xkeypass)
 
-##Installation
+## Installation
+
 To install, copy `xkeypass` into your $PATH.
 
-#####Dependencies
+### Dependencies
+
 xkeypass depends on:
 
 * [password-store](http://www.zx2c4.com/projects/password-store/) by Jason Donenfeld
@@ -19,7 +23,9 @@ Optional dependency:
 * [xdotool](http://www.semicomplete.com/projects/xdotool/) by Jordan Sissel
 
 If xdotool is not available, xkeypass won't be able to type passwords.
-##Usage
+
+## Usage
+
 ```
 xkeypass acts as a front-end to pass, extracting stored json data types.
 
@@ -43,7 +49,8 @@ Commands
   c, clip KEY                 copy KEY to the X clipboard
 ```
 
-##Integration with X
+## Integration with X
+
 The `xkeypass type` command can come in handy if your window manager supports
 customizable key bindings. For example, I use the following in my i3 config:
 
@@ -55,14 +62,16 @@ By pressing $mod+w I can enter the record title. pinentry will prompt for the
 password to unlock the password store, then xkeypass types the password at the
 current cursor position.
 
-##To-Do / known issues
+## To-Do / known issues
+
 * Print a warning or require confirmation when a stored password would include
   characters outside of 7-bit ASCII: this can lead to broken passwords when the
   encoding changes for any reason
 * Support json arrays
 * Doesn't type whitespace characters if they are found in the key
 
-##Legal
+## Legal
+
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or (at your
