@@ -1,3 +1,9 @@
+# DEPRECATED
+
+This tool is **DEPRECATED** and unmaintained since I switched to
+[pwstore](https://github.com/rpdelaney/pwstore). It probably won't work with
+newer versions of `jq` or password-store.
+
 # xkeypass
 
 A command-line tool that performs CRUD operations on json-formatted records
